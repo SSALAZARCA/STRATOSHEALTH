@@ -12,6 +12,7 @@ services:
       - PORT=13500
       - DATABASE_URL=file:/app/prisma/db/dev.db
       - NEXTAUTH_URL=https://stratoshealth.site
+      - AUTH_URL=https://stratoshealth.site/api/auth
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-farmaips-secret-2024-invima}
       - AUTH_SECRET=${AUTH_SECRET:-my-super-secret-farmaips-key-2026}
       - AUTH_TRUST_HOST=true
