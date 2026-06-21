@@ -12,6 +12,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# Set build-time database URL for prisma schema validation and static generation
+ENV DATABASE_URL="file:./dev.db"
+
 # Generate Prisma Client
 RUN npx prisma generate
 
