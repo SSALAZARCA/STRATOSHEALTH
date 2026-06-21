@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: stratoshealth:latest
+    container_name: stratoshealth-app
+    restart: always
+    environment:
+      - PORT=3000
+      - DATABASE_URL=file:/app/prisma/db/dev.db
+      - NEXTAUTH_URL=https://stratoshealth.site
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-farmaips-secret-2024-invima}
+      - AUTH_SECRET=${AUTH_SECRET:-my-super-secret-farmaips-key-2026}
+      
+      # Configuración de Backblaze B2 para archivos y respaldos
+      - B2_ENDPOINT=${B2_ENDPOINT:-https://s3.us-east-005.backblazeb2.com}
+      - B2_REGION=${B2_REGION:-us-east-005}
+      - B2_FILES_KEY_ID=${B2_FILES_KEY_ID:-0057146ba4bda2a0000000001}
+      - B2_FILES_APP_KEY=${B2_FILES_APP_KEY:-K005eKZDT8RmFYaRdrH5JLZQDGtOxx8}
+      - B2_FILES_BUCKET=${B2_FILES_BUCKET:-stratosHealth-app-files}
+      - B2_BACKUPS_KEY_ID=${B2_BACKUPS_KEY_ID:-0057146ba4bda2a0000000002}
+      - B2_BACKUPS_APP_KEY=${B2_BACKUPS_APP_KEY:-K005NqvfK3I8TAQoZsBJckhf1TWbT08}
+      - B2_BACKUPS_BUCKET=${B2_BACKUPS_BUCKET:-stratosHealth-db-backups}
+    volumes:
+      - db-data:/app/prisma/db
+    ports:
+      - "3000:3000"
+
+volumes:
+  db-data:
