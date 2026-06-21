@@ -7,7 +7,14 @@ async function main() {
 
   // 1. Crear Tenant base si no existe
   const tenantId = "ips-principal";
-  let tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+  let tenant = await prisma.tenant.findFirst({
+    where: {
+      OR: [
+        { id: tenantId },
+        { nit: "900123456-7" }
+      ]
+    }
+  });
   if (!tenant) {
     tenant = await prisma.tenant.create({
       data: {
@@ -64,7 +71,12 @@ async function main() {
   // 5. Crear proveedor si no existe
   const supplierEmail = "pedidos@dfnacional.com";
   let supplier = await prisma.globalSupplier.findFirst({
-    where: { email: supplierEmail },
+    where: {
+      OR: [
+        { email: supplierEmail },
+        { nit: "800456789-1" }
+      ]
+    },
   });
   if (!supplier) {
     supplier = await prisma.globalSupplier.create({
@@ -78,6 +90,8 @@ async function main() {
       },
     });
     console.log("✅ Proveedor creado:", supplier.name);
+  } else {
+    console.log("ℹ️ Proveedor ya existe:", supplier.name);
   }
 
   // 6. Crear productos base si no hay ninguno en el tenant
