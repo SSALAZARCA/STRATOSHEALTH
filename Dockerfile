@@ -62,5 +62,5 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-# Run database push to apply schema at startup, then run server
-CMD ["sh", "-c", "npx prisma db push && node server.js"]
+# Run database push to apply schema and seed to initialize production user at startup, then run server
+CMD ["sh", "-c", "npx prisma db push && npx prisma db seed && node server.js"]
