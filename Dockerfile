@@ -56,7 +56,8 @@ RUN mkdir -p /app/prisma/db && chown -R nextjs:nodejs /app/prisma
 # Set database path to the subfolder that will be mounted in a named volume
 ENV DATABASE_URL="file:/app/prisma/db/dev.db"
 
-USER nextjs
+# Running as root to ensure full write permissions on mounted persistent storage volumes
+# USER nextjs
 
 EXPOSE 3000
 ENV PORT 3000
