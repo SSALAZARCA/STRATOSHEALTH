@@ -50,6 +50,7 @@ COPY --from=builder /app/prisma ./prisma
 # Copy all node_modules to run prisma db push at runtime
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/test_login.js ./test_login.js
 
 # Create database folder inside prisma to mount volume to
 RUN mkdir -p /app/prisma/db && chown -R nextjs:nodejs /app/prisma
@@ -66,5 +67,5 @@ EXPOSE 13500
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-# Start socat in background to forward port 13500 to 3000, run db migrations, and run server
-CMD ["sh", "-c", "socat TCP-LISTEN:13500,fork,reuseaddr TCP:127.0.0.1:3000 & npx prisma db push && npx prisma db seed && node server.js"]
+# Start socat in background to forward port 13500 to 3000, run db migrations, test database query + bcrypt, and run server
+CMD ["sh", "-c", "socat TCP-LISTEN:13500,fork,reuseaddr TCP:127.0.0.1:3000 & npx prisma db push && npx prisma db seed && node test_login.js && node server.js"]
