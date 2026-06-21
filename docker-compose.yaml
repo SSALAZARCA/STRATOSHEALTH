@@ -8,10 +8,8 @@ services:
     image: stratoshealth:latest
     container_name: stratoshealth-app
     restart: always
-    labels:
-      - "coolify.port=13500"
     environment:
-      - PORT=13500
+      - PORT=3000
       - DATABASE_URL=file:/app/prisma/db/dev.db
       - NEXTAUTH_URL=https://stratoshealth.site
       - AUTH_URL=https://stratoshealth.site/api/auth
@@ -31,7 +29,7 @@ services:
     volumes:
       - db-data:/app/prisma/db
     ports:
-      - "13500:13500"
+      - "13500:3000"
     networks:
       - coolify
 
