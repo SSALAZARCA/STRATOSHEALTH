@@ -15,6 +15,9 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # Generate Prisma Client
 RUN npx prisma generate
 
+# Run a temporary db push to create the database schema for Next.js build-time prerendering
+RUN npx prisma db push
+
 # Build Next.js
 RUN npm run build
 
