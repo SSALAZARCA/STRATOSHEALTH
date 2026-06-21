@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     serverActions: {
       allowedOrigins: [
         "localhost:3000",
+        "localhost:13500",
         "stratoshealth.site",
         "*.stratoshealth.site",
         "*.coolify.selfhosted" // general development/test on Coolify
