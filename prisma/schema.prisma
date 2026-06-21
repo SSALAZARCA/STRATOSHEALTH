@@ -1,0 +1,559 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// USUARIOS Y ROLES
+// ============================================================
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      Role     @default(NURSE)
+  tenantId  String?
+  tenant    Tenant?   @relation(fields: [tenantId], references: [id])
+  active    Boolean  @default(true)
+  totpSecret String? // Secreto para Google Authenticator
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  clinicalRecords ClinicalRecord[]
+  documentExportLogs DocumentExportLog[]
+  clinicalAddendums ClinicalAddendum[]
+}
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  PHARMACIST
+  NURSE
+  DOCTOR
+  MANAGER
+  RECORDS_MANAGER
+  SUPPLIER_ADMIN
+}
+
+// ============================================================
+// SAAS (Planes y Pagos)
+// ============================================================
+model SubscriptionPlan {
+  id           String   @id @default(cuid())
+  name         String
+  price        Float
+  durationMonths Int    @default(1) // 1: Mensual, 12: Anual, 24: 2 Años
+  maxUsers     Int      @default(5)
+  features     String   // JSON string
+  active       Boolean  @default(true)
+  tenants      Tenant[]
+  createdAt    DateTime @default(now())
+}
+
+model PaymentGatewayConfig {
+  id            String   @id @default(cuid())
+  provider      String   // "STRIPE", "MERCADOPAGO", "EPAYCO"
+  publicKey     String
+  secretKey     String
+  webhookSecret String?
+  isActive      Boolean  @default(false)
+}
+
+// ============================================================
+// REGIONES Y GEOLOCALIZACIÓN
+// ============================================================
+model Region {
+  id          String   @id @default(cuid())
+  name        String   // Ej: "Antioquia", "Cundinamarca", "Medellín"
+  tenants     Tenant[]
+  branches    Branch[]
+  suppliers   SupplierCoverage[]
+}
+
+model Branch {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String   // Ej: "Sede Poblado"
+  regionId    String
+  region      Region   @relation(fields: [regionId], references: [id])
+  address     String
+}
+
+// ============================================================
+// TENANT (IPS)
+// ============================================================
+model Tenant {
+  id            String          @id @default(cuid())
+  name          String
+  nit           String          @unique
+  address       String?
+  phone         String?
+  email         String?
+  logo          String?
+  
+  regionId      String?
+  region        Region?         @relation(fields: [regionId], references: [id])
+  
+  subscriptionStatus String   @default("ACTIVE") // ACTIVE, SUSPENDED, CANCELLED
+  subscriptionPlan   String   @default("BASIC") // BASIC, PREMIUM - Legacy support
+  planId             String?
+  plan               SubscriptionPlan? @relation(fields: [planId], references: [id])
+  autoRenew          Boolean  @default(true)
+  nextBillingDate    DateTime?
+  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  paymentMethods PaymentMethod[]
+  
+  users         User[]
+  products      Product[]
+  patients      Patient[]
+  purchaseOrders PurchaseOrder[]
+  nurseOrders   NurseOrder[]
+  auditLogs     AuditLog[]
+  branches      Branch[]
+  clinicalHistories ClinicalHistory[]
+  documentExportLogs DocumentExportLog[]
+}
+
+// ============================================================
+// PAGOS Y SUSCRIPCIÓN
+// ============================================================
+model PaymentMethod {
+  id           String   @id @default(cuid())
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+  
+  provider     String   // "WOMPI", "STRIPE", "PAYPAL", "PSE"
+  type         String   // "CREDIT_CARD", "DEBIT_CARD", "BANK_ACCOUNT"
+  brand        String?  // "VISA", "MASTERCARD", "AMEX" (for cards)
+  last4        String   // "4242" or last digits of bank account
+  expMonth     Int?
+  expYear      Int?
+  cardholder   String?
+  
+  isDefault    Boolean  @default(false)
+  
+  // Real gateway reference (Token)
+  gatewayToken String   // The secure token from Wompi/Stripe
+  
+  createdAt    DateTime @default(now())
+}
+
+// ============================================================
+// INVENTARIO - PRODUCTOS / MEDICAMENTOS
+// ============================================================
+model Product {
+  id                String    @id @default(cuid())
+  tenantId          String
+  tenant            Tenant    @relation(fields: [tenantId], references: [id])
+  
+  // Identificación INVIMA
+  name              String
+  genericName       String
+  concentration     String?
+  pharmaceuticalForm String?  // Tableta, Ampolla, Jarabe, etc.
+  invimaSanitary    String?   // Registro sanitario INVIMA
+  atcCode           String?   // Código ATC
+  
+  // Control de inventario
+  stock             Int       @default(0)
+  minStock          Int       @default(10)
+  maxStock          Int       @default(500)
+  unitCost          Float     @default(0)
+  salePrice         Float     @default(0)
+  unit              String    @default("UND") // UND, ML, MG, etc.
+  
+  // Lote y vencimiento (INVIMA)
+  lot               String?
+  expiryDate        DateTime?
+  
+  // Control especial
+  controlled        Boolean   @default(false)  // Medicamento de control especial
+  requiresPrescription Boolean @default(false) // Requiere fórmula médica
+  
+  // Clasificación
+  category          String?
+  location          String?   // Ubicación en farmacia
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  orderItems        NurseOrderItem[]
+  consumptions      PatientConsumption[]
+  purchaseItems     PurchaseOrderItem[]
+  kardexEntries     KardexEntry[]
+}
+
+// ============================================================
+// PACIENTES
+// ============================================================
+model Patient {
+  id             String    @id @default(cuid())
+  tenantId       String
+  tenant         Tenant    @relation(fields: [tenantId], references: [id])
+  
+  name           String
+  documentType   String    @default("CC")
+  documentNumber String
+  bedNumber      String?
+  ward           String?   // Sala / servicio
+  diagnosis      String?
+  doctor         String?
+  
+  admissionDate  DateTime  @default(now())
+  dischargeDate  DateTime?
+  status         String    @default("ADMITTED") // ADMITTED, DISCHARGED
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  nurseOrders    NurseOrder[]
+  consumptions   PatientConsumption[]
+  billingOrders  BillingOrder[]
+  clinicalHistory ClinicalHistory?
+  documentExportLogs DocumentExportLog[]
+}
+
+// ============================================================
+// HISTORIA CLÍNICA (EHR)
+// ============================================================
+model ClinicalHistory {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  patientId   String   @unique
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  
+  bloodType   String?
+  allergies   String?
+  familyHistory String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  records     ClinicalRecord[]
+}
+
+model ClinicalRecord {
+  id              String   @id @default(cuid())
+  historyId       String
+  history         ClinicalHistory @relation(fields: [historyId], references: [id])
+  
+  authorId        String
+  author          User     @relation(fields: [authorId], references: [id])
+  
+  type            String   // ADMISSION, MEDICAL_EVOLUTION, NURSING_NOTE, DISCHARGE
+  status          String   @default("DRAFT") // DRAFT, SIGNED (Immutable)
+  
+  // Estructura JSON para permitir flexibilidad sin romper esquema
+  anamnesis       String?  // JSON o Texto
+  physicalExam    String?  // JSON (signos vitales: BP, HR, Temp, SpO2, etc.)
+  managementPlan  String?  // JSON o Texto
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  signedAt        DateTime?
+  signatureIp     String?
+  
+  addendums       ClinicalAddendum[]
+  diagnoses       Diagnosis[]
+}
+
+model ClinicalAddendum {
+  id              String   @id @default(cuid())
+  recordId        String
+  record          ClinicalRecord @relation(fields: [recordId], references: [id])
+  
+  authorId        String
+  author          User     @relation(fields: [authorId], references: [id])
+  
+  content         String
+  createdAt       DateTime @default(now())
+  signedAt        DateTime?
+  signatureIp     String?
+}
+
+model Diagnosis {
+  id              String   @id @default(cuid())
+  recordId        String
+  record          ClinicalRecord @relation(fields: [recordId], references: [id])
+  
+  cie10Code       String
+  description     String
+  type            String   // PRINCIPAL, RELACIONADO
+  
+  createdAt       DateTime @default(now())
+}
+
+// ============================================================
+// PEDIDOS DE ENFERMERÍA
+// ============================================================
+model NurseOrder {
+  id          String    @id @default(cuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  
+  nurseNote   String?
+  status      String    @default("PENDING") // PENDING, PARTIAL, DISPATCHED, REJECTED
+  dispatchedAt DateTime?
+  
+  // Soporte fórmula médica para controlados
+  prescriptionUrl String?
+  doctorName      String?
+  prescriptionDate DateTime?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  items       NurseOrderItem[]
+}
+
+model NurseOrderItem {
+  id           String     @id @default(cuid())
+  nurseOrderId String
+  nurseOrder   NurseOrder @relation(fields: [nurseOrderId], references: [id])
+  productId    String
+  product      Product    @relation(fields: [productId], references: [id])
+  
+  requestedQty Int
+  dispatchedQty Int       @default(0)
+  status       String     @default("PENDING") // PENDING, DISPATCHED, PARTIAL, UNAVAILABLE
+  
+  createdAt    DateTime   @default(now())
+}
+
+// ============================================================
+// CONSUMO DE PACIENTE (KARDEX CLÍNICO)
+// ============================================================
+model PatientConsumption {
+  id          String    @id @default(cuid())
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id])
+  
+  quantity    Int
+  unitPrice   Float
+  totalPrice  Float
+  
+  administeredAt DateTime @default(now())
+  administeredBy String?
+  notes       String?
+}
+
+// ============================================================
+// ORDEN DE COBRO (FACTURACIÓN AL EGRESO)
+// ============================================================
+model BillingOrder {
+  id          String    @id @default(cuid())
+  tenantId    String
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  
+  totalAmount Float
+  status      String    @default("PENDING") // PENDING, SENT, PAID
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ============================================================
+// PROVEEDORES GLOBALES (B2B Marketplace)
+// ============================================================
+model GlobalSupplier {
+  id                  String   @id @default(cuid())
+  name                String
+  nit                 String   @unique
+  email               String   @unique
+  contact             String?
+  phone               String?
+  address             String?
+  active              Boolean  @default(true)
+  
+  subscriptionStatus  String   @default("ACTIVE") // ACTIVE, SUSPENDED, CANCELLED
+  planId              String?
+  plan                SupplierPlan? @relation(fields: [planId], references: [id])
+  autoRenew           Boolean  @default(true)
+  nextBillingDate     DateTime?
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  
+  coverages           SupplierCoverage[]
+  offers              SupplierOffer[]
+  orders              PurchaseOrder[]
+}
+
+model SupplierCoverage {
+  id          String   @id @default(cuid())
+  supplierId  String
+  supplier    GlobalSupplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  regionId    String
+  region      Region         @relation(fields: [regionId], references: [id])
+}
+
+model SupplierOffer {
+  id              String   @id @default(cuid())
+  supplierId      String
+  supplier        GlobalSupplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  invimaSanitary  String?
+  atcCode         String?
+  name            String
+  genericName     String
+  concentration   String?
+  pharmaceuticalForm String?
+  unit            String   @default("UND")
+  controlled      Boolean  @default(false)
+  requiresPrescription Boolean @default(false)
+  lot             String?
+  expiryDate      DateTime?
+  price           Float
+  availableStock  Int
+  leadTimeDays    Int      @default(3) // Tiempo de entrega en días
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============================================================
+// ÓRDENES DE COMPRA (IPS -> GlobalSupplier)
+// ============================================================
+model PurchaseOrder {
+  id          String    @id @default(cuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  supplierId  String
+  supplier    GlobalSupplier  @relation(fields: [supplierId], references: [id])
+  
+  status      String    @default("DRAFT") // DRAFT, SENT, RECEIVED, CANCELLED
+  totalAmount Float     @default(0)
+  notes       String?
+  emailSent   Boolean   @default(false)
+  emailSentAt DateTime?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  items       PurchaseOrderItem[]
+}
+
+model PurchaseOrderItem {
+  id              String        @id @default(cuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  productId       String
+  product         Product       @relation(fields: [productId], references: [id])
+  
+  quantity        Int
+  unitCost        Float
+  totalCost       Float
+}
+
+// ============================================================
+// KARDEX INVIMA (MOVIMIENTOS DE INVENTARIO)
+// ============================================================
+model KardexEntry {
+  id          String    @id @default(cuid())
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id])
+  
+  type        String    // ENTRADA, SALIDA, AJUSTE
+  quantity    Int
+  balanceAfter Int
+  reason      String    // COMPRA, DESPACHO, VENCIMIENTO, AJUSTE
+  reference   String?   // ID orden compra o pedido
+  lot         String?
+  expiryDate  DateTime?
+  
+  performedBy String?
+  createdAt   DateTime  @default(now())
+}
+
+// ============================================================
+// AUDITORÍA GENERAL
+// ============================================================
+model AuditLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  action    String
+  details   String?
+  userId    String?
+  ipAddress String?
+  resourceId String? // Para rastrear ID de paciente o historia accedida
+  createdAt DateTime @default(now())
+}
+
+// ============================================================
+// DICCIONARIOS GLOBALES (No pertenecen a un Tenant)
+// ============================================================
+
+model Cie10 {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Cups {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================================
+// AUDITORÍA DE EXPORTACIÓN Y ACCESO LEGAL A HISTORIAS
+// ============================================================
+model DocumentExportLog {
+  id                  String   @id @default(cuid())
+  tenantId            String
+  tenant              Tenant   @relation(fields: [tenantId], references: [id])
+  
+  patientId           String
+  patient             Patient  @relation(fields: [patientId], references: [id])
+  
+  userId              String
+  user                User     @relation(fields: [userId], references: [id])
+  
+  action              String   @default("DOWNLOAD_PDF") // VIEW, DOWNLOAD_PDF
+  justification       String?  @default("Sin justificación")
+  supportDocumentPath String?  // Ruta del archivo PDF/JPG subido como soporte (orden judicial, etc)
+  signatureIp         String?
+  
+  createdAt           DateTime @default(now())
+}
+
+// ============================================================
+// CONFIGURACIÓN DE BACKUPS AUTOMÁTICOS
+// ============================================================
+model BackupSchedule {
+  id        String   @id @default(cuid())
+  hour      Int      // 0 - 23
+  minute    Int      @default(0) // 0 - 59
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model SupplierPlan {
+  id             String   @id @default(cuid())
+  name           String
+  price          Float
+  durationMonths Int      @default(1)
+  features       String   // JSON string
+  active         Boolean  @default(true)
+  suppliers      GlobalSupplier[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
