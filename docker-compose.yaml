@@ -28,7 +28,7 @@ services:
     volumes:
       - db-data:/app/prisma/db
     ports:
-      - "3000:3000"
+      - "80:80"
     networks:
       - coolify
 

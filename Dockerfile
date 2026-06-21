@@ -60,8 +60,8 @@ ENV AUTH_TRUST_HOST true
 # Running as root to ensure full write permissions on mounted persistent storage volumes
 # USER nextjs
 
-EXPOSE 3000
-ENV PORT 3000
+EXPOSE 80
+ENV PORT 80
 ENV HOSTNAME "0.0.0.0"
 
 # Run database push to apply schema and seed to initialize production user at startup, then run server
