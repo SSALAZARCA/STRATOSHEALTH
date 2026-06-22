@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
 import { Logo } from "@/components/Logo";
@@ -34,7 +34,28 @@ function LoginForm() {
           setError(`Error de autenticación: ${res.error}`);
         }
       } else {
-        router.push("/");
+        const session = await getSession();
+        if (session?.user) {
+          const role = session.user.role;
+          const tenantId = session.user.tenantId;
+
+          if (role === "SUPERADMIN") {
+            router.push("/superadmin/dashboard");
+          } else if (role === "SUPPLIER_ADMIN") {
+            router.push("/supplier/dashboard");
+          } else if (tenantId) {
+            if (role === "NURSE") router.push(`/pharmacy/${tenantId}/dashboard/nurse`);
+            else if (role === "DOCTOR") router.push(`/pharmacy/${tenantId}/dashboard/doctor`);
+            else if (role === "RECORDS_MANAGER") router.push(`/pharmacy/${tenantId}/records`);
+            else if (role === "PHARMACIST") router.push(`/pharmacy/${tenantId}/dashboard/pharmacist`);
+            else if (role === "MANAGER") router.push(`/pharmacy/${tenantId}/dashboard/manager`);
+            else router.push(`/pharmacy/${tenantId}/dashboard`);
+          } else {
+            router.push("/");
+          }
+        } else {
+          router.push("/");
+        }
         router.refresh();
       }
     } catch (err) {
