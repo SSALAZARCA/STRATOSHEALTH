@@ -42,12 +42,14 @@ async function main() {
       password: passwordHash,
       role: "SUPERADMIN",
       name: "Dueño StratosHealth",
+      active: true,
     },
     create: {
       email: ownerEmail,
       name: "Dueño StratosHealth",
       role: "SUPERADMIN",
       password: passwordHash,
+      active: true,
     },
   });
   console.log("✅ Usuario dueño/SUPERADMIN creado/actualizado:", ownerUser.email);
