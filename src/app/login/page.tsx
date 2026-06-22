@@ -1,27 +1,48 @@
-import { signIn } from "@/auth";
-import { AuthError } from "next-auth";
-import { redirect } from "next/navigation";
+"use client";
+
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
 import { Logo } from "@/components/Logo";
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const resolvedParams = await searchParams;
+function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const errorParam = searchParams.get("error");
 
-  async function authenticate(formData: FormData) {
-    "use server";
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(errorParam || null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
     try {
-      await signIn("credentials", formData);
-    } catch (error) {
-      if (error instanceof AuthError) {
-        switch (error.type) {
-          case "CredentialsSignin":
-            redirect("/login?error=Credenciales+inválidas");
-          default:
-            redirect("/login?error=Error+de+autenticación");
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (res?.error) {
+        if (res.error === "CredentialsSignin") {
+          setError("Credenciales inválidas");
+        } else {
+          setError("Error de autenticación");
         }
+      } else {
+        router.push("/");
+        router.refresh();
       }
-      throw error;
+    } catch (err) {
+      setError("Ocurrió un error inesperado");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div style={{
@@ -34,23 +55,41 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <p style={{ color: "var(--text-muted)", marginTop: "0.5rem", fontSize: "0.9rem" }}>SaaS Multi-tenant Farmacéutico</p>
         </div>
 
-        {resolvedParams.error && (
+        {error && (
           <div className="alert alert-danger" style={{ marginBottom: "1.5rem", textAlign: "center" }}>
-            ❌ {resolvedParams.error}
+            ❌ {error}
           </div>
         )}
 
-        <form action={authenticate} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           <div>
             <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.875rem", color: "var(--text-muted)" }}>Correo Electrónico</label>
-            <input type="email" name="email" required placeholder="tu@correo.com" className="form-control" style={{ width: "100%" }} />
+            <input 
+              type="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+              placeholder="tu@correo.com" 
+              className="form-control" 
+              style={{ width: "100%" }} 
+              disabled={loading}
+            />
           </div>
           <div>
             <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.875rem", color: "var(--text-muted)" }}>Contraseña</label>
-            <input type="password" name="password" required placeholder="••••••••" className="form-control" style={{ width: "100%" }} />
+            <input 
+              type="password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+              placeholder="••••••••" 
+              className="form-control" 
+              style={{ width: "100%" }} 
+              disabled={loading}
+            />
           </div>
-          <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "0.875rem", marginTop: "0.5rem", fontWeight: 600 }}>
-            Iniciar Sesión
+          <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "0.875rem", marginTop: "0.5rem", fontWeight: 600 }} disabled={loading}>
+            {loading ? "Iniciando Sesión..." : "Iniciar Sesión"}
           </button>
         </form>
 
@@ -65,5 +104,13 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ color: "white", textAlign: "center", marginTop: "2rem" }}>Cargando...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
