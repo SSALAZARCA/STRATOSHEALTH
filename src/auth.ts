@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: true,
+  trustHost: true,
   pages: {
     signIn: "/login",
   },
@@ -23,8 +24,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
         
+        const emailClean = (credentials.email as string).trim().toLowerCase();
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string }
+          where: { email: emailClean }
         });
         
         if (!user) {
