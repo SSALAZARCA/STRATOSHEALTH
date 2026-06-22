@@ -14,6 +14,8 @@ services:
       - NEXTAUTH_SECRET=farmaips-secret-2024-invima
       - AUTH_SECRET=my-super-secret-farmaips-key-2026
       - AUTH_TRUST_HOST=true
+      - AUTH_URL=https://stratoshealth.site/api/auth
+      - NEXTAUTH_URL=https://stratoshealth.site
       
       # Configuración de Backblaze B2 para archivos y respaldos
       - B2_ENDPOINT=${B2_ENDPOINT:-https://s3.us-east-005.backblazeb2.com}
