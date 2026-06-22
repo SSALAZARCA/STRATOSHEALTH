@@ -9,12 +9,8 @@ services:
     container_name: stratoshealth-app
     restart: always
     environment:
-      - PORT=13500
+      - PORT=3000
       - DATABASE_URL=file:/app/prisma/db/dev.db
-      - NEXTAUTH_URL=https://stratoshealth.site
-      - AUTH_URL=https://stratoshealth.site/api/auth
-      - NEXTAUTH_URL_INTERNAL=http://localhost:13500
-      - AUTH_URL_INTERNAL=http://localhost:13500/api/auth
       - NEXTAUTH_SECRET=farmaips-secret-2024-invima
       - AUTH_SECRET=my-super-secret-farmaips-key-2026
       - AUTH_TRUST_HOST=true
@@ -31,7 +27,7 @@ services:
     volumes:
       - db-data:/app/prisma/db
     ports:
-      - "13500:13500"
+      - "13500:3000"
     networks:
       - coolify
 

@@ -62,8 +62,8 @@ ENV AUTH_TRUST_HOST true
 # Running as root to ensure full write permissions on mounted persistent storage volumes
 # USER nextjs
 
-EXPOSE 13500
-ENV PORT 13500
+EXPOSE 3000
+ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
 # Run db migrations, test database query + bcrypt, and run server
