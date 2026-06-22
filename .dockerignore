@@ -28,4 +28,5 @@ original_landing_*
 *.ps1
 *.cjs
 *.js
+!test_login.js
 *.txt
