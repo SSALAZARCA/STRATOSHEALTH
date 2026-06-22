@@ -2,6 +2,13 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
 export default auth((req) => {
+  // Force HTTPS in production behind reverse proxy
+  const proto = req.headers.get("x-forwarded-proto");
+  const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || "stratoshealth.site";
+  if (proto === "http" && process.env.NODE_ENV === "production") {
+    return NextResponse.redirect(`https://${host}${req.nextUrl.pathname}${req.nextUrl.search}`, 301);
+  }
+
   const isLoggedIn = !!req.auth;
   const isAuthPage = req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/register";
   const isPublicPage = req.nextUrl.pathname === "/" || req.nextUrl.pathname === "/proveedores" || isAuthPage || req.nextUrl.pathname.startsWith("/api/") || req.nextUrl.pathname.startsWith("/images/");
