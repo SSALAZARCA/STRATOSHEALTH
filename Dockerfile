@@ -27,7 +27,6 @@ RUN npm run build
 
 # Stage 3: Runner
 FROM node:20-alpine AS runner
-RUN apk add --no-cache socat
 WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -64,9 +63,8 @@ ENV AUTH_TRUST_HOST true
 # USER nextjs
 
 EXPOSE 3000
-EXPOSE 13500
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
 # Run db migrations, test database query + bcrypt, and run server
-CMD ["sh", "-c", "socat TCP-LISTEN:13500,fork,reuseaddr TCP:127.0.0.1:3000 & npx prisma db push && npx prisma db seed && node test_login.js && node server.js"]
+CMD ["sh", "-c", "npx prisma db push && npx prisma db seed && node test_login.js && node server.js"]
