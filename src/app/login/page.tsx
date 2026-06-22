@@ -74,6 +74,7 @@ function LoginForm() {
         <div style={{ textAlign: "center", marginBottom: "2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
           <Logo variant="dark" size={48} showText={true} />
           <p style={{ color: "var(--text-muted)", marginTop: "0.5rem", fontSize: "0.9rem" }}>SaaS Multi-tenant Farmacéutico</p>
+          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", opacity: 0.5, border: "1px solid rgba(255,255,255,0.15)", borderRadius: "12px", padding: "2px 8px", background: "rgba(255,255,255,0.05)", marginTop: "0.25rem" }}>v1.3.0 - SSL Proxy Bypass</span>
         </div>
 
         {error && (
