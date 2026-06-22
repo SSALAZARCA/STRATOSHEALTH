@@ -31,7 +31,7 @@ function LoginForm() {
         if (res.error === "CredentialsSignin") {
           setError("Credenciales inválidas");
         } else {
-          setError("Error de autenticación");
+          setError(`Error de autenticación: ${res.error}`);
         }
       } else {
         router.push("/");
