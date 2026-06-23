@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import LandingClient from "./LandingClient";
 
+export const dynamic = "force-dynamic";
+
 const prisma = new PrismaClient();
 
 export default async function LandingPage() {
