@@ -20,6 +20,16 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
   const [activeRole, setActiveRole] = useState<"regente" | "gerente">("regente");
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [selectedPlanForModal, setSelectedPlanForModal] = useState<Plan | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   
   // Rotación del subtítulo (Typewriter/Carousel)
   const [subheadingIndex, setSubheadingIndex] = useState(0);
@@ -121,7 +131,7 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
 
       {/* Header / Navbar */}
       <header className="glass-header-light" style={{
-        padding: "1.25rem 5%",
+        padding: isMobile ? "0.75rem 3%" : "1.25rem 5%",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -133,21 +143,23 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
         borderBottom: "1px solid #e2e8f0"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <Logo size={42} variant="light" />
+          <Logo size={isMobile ? 32 : 42} variant="light" showText={!isMobile} />
         </div>
         
-        <nav style={{ display: "flex", gap: "2rem", alignItems: "center" }} className="hidden md:flex">
-          <a href="#features" className="nav-link-light">Módulos</a>
-          <a href="#simulator" className="nav-link-light">Simulador</a>
-          <a href="#process" className="nav-link-light">Nuestro Proceso</a>
-          <a href="#pricing" className="nav-link-light">Tarifas</a>
-        </nav>
+        {!isMobile && (
+          <nav style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+            <a href="#features" className="nav-link-light">Módulos</a>
+            <a href="#simulator" className="nav-link-light">Simulador</a>
+            <a href="#process" className="nav-link-light">Nuestro Proceso</a>
+            <a href="#pricing" className="nav-link-light">Tarifas</a>
+          </nav>
+        )}
 
-        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+        <div style={{ display: "flex", gap: isMobile ? "0.4rem" : "0.75rem", alignItems: "center" }}>
           <Link
             href="/proveedores"
             style={{
-              display: "inline-flex",
+              display: isMobile ? "none" : "inline-flex",
               alignItems: "center",
               gap: "0.4rem",
               background: "linear-gradient(135deg, #10b981, #059669)",
@@ -163,10 +175,10 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
           >
             🏭 Soy Proveedor
           </Link>
-          <Link href="/login" className="btn btn-outline-light-theme">
+          <Link href="/login" className="btn btn-outline-light-theme" style={{ padding: isMobile ? "0.4rem 0.8rem" : "0.6rem 1.5rem", fontSize: isMobile ? "0.75rem" : "0.9rem" }}>
             Iniciar Sesión
           </Link>
-          <Link href="#pricing" className="btn btn-primary-light-theme">
+          <Link href="#pricing" className="btn btn-primary-light-theme" style={{ padding: isMobile ? "0.4rem 0.8rem" : "0.65rem 1.5rem", fontSize: isMobile ? "0.75rem" : "0.9rem" }}>
             Crear Cuenta
           </Link>
         </div>
@@ -185,7 +197,7 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
             </div>
             
             <h1 style={{
-              fontSize: "4.25rem",
+              fontSize: isMobile ? "2.5rem" : "4.25rem",
               fontWeight: 900,
               lineHeight: 1.1,
               marginBottom: "1.5rem",
@@ -291,7 +303,7 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
           <div className="badge-premium-light" style={{ marginBottom: "1.5rem" }}>
             🔍 SERVICIOS Y MÓDULOS
           </div>
-          <h2 style={{ fontSize: "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#0f172a" }}>
+          <h2 style={{ fontSize: isMobile ? "2rem" : "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#0f172a" }}>
             Diseñado para Cada Eslabón de la Cadena
           </h2>
           <p style={{ color: "#475569", fontSize: "1.15rem", lineHeight: 1.6 }}>
@@ -483,7 +495,7 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
           <div className="badge-premium-light" style={{ marginBottom: "1.5rem" }}>
             ⚡ EXPERIENCIA EN VIVO
           </div>
-          <h2 style={{ fontSize: "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#0f172a" }}>
+          <h2 style={{ fontSize: isMobile ? "2rem" : "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#0f172a" }}>
             Simulador de Roles: Gerente vs. Regente
           </h2>
           <p style={{ color: "#475569", fontSize: "1.15rem", lineHeight: 1.6 }}>
@@ -549,11 +561,7 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
             </div>
           </div>
 
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "2.5rem"
-          }} className="grid-responsive-sim">
+          <div className="grid-responsive-sim">
             {/* Simulador Interfaz */}
             <div style={{
               background: "#f8fafc",
@@ -703,7 +711,7 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
           <div className="badge-premium-light" style={{ marginBottom: "1.5rem" }}>
             👥 SEGURIDAD DE ACCESOS
           </div>
-          <h2 style={{ fontSize: "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#0f172a" }}>
+          <h2 style={{ fontSize: isMobile ? "2rem" : "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#0f172a" }}>
             Ecosistema de Roles y Permisos Clínicos
           </h2>
           <p style={{ color: "#475569", fontSize: "1.15rem", lineHeight: 1.6 }}>
@@ -817,17 +825,13 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
       }}>
         <div style={{
           maxWidth: "1200px",
-          margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "4rem",
-          alignItems: "center"
+          margin: "0 auto"
         }} className="section-grid">
           <div>
             <div className="badge-premium-light" style={{ marginBottom: "1.5rem" }}>
               🔒 GARANTÍA LEGAL Y TÉCNICA
             </div>
-            <h2 style={{ fontSize: "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1.5px", color: "#0f172a", lineHeight: 1.1 }}>
+            <h2 style={{ fontSize: isMobile ? "2rem" : "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1.5px", color: "#0f172a", lineHeight: 1.1 }}>
               Sistema de Firma e Inmutabilidad de Historias Clínicas
             </h2>
             <p style={{ color: "#475569", fontSize: "1.15rem", lineHeight: 1.6, marginBottom: "2rem" }}>
@@ -959,7 +963,7 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
           <div className="badge-premium-light" style={{ marginBottom: "1.5rem" }}>
             📋 CÓMO EMPEZAR
           </div>
-          <h2 style={{ fontSize: "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#0f172a" }}>
+          <h2 style={{ fontSize: isMobile ? "2rem" : "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#0f172a" }}>
             Proceso de Integración en 4 Pasos
           </h2>
           <p style={{ color: "#475569", fontSize: "1.15rem", lineHeight: 1.6 }}>
@@ -1021,7 +1025,7 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
             💲 PRECIOS DEL SERVICIO
           </div>
           <h2 style={{
-            fontSize: "3.25rem",
+            fontSize: isMobile ? "2rem" : "3.25rem",
             fontWeight: 900,
             lineHeight: 1.2,
             letterSpacing: "-1px",
@@ -1608,7 +1612,7 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
               {/* Módulos Incluidos */}
               <div>
                 <h4 style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a", marginBottom: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Módulos Habilitados</h4>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "0.75rem" }}>
                   {(() => {
                     try {
                       const parsed = JSON.parse(selectedPlanForModal.features as string);
@@ -1719,6 +1723,19 @@ const styleTag = (
     .dot-grid {
       background-image: radial-gradient(rgba(15, 23, 42, 0.05) 1.5px, transparent 0);
       background-size: 24px 24px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .grid-responsive-sim {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
     }
 
     .nav-link-light {
@@ -1919,6 +1936,10 @@ const styleTag = (
         grid-template-columns: 1fr;
         gap: 3rem;
         text-align: center;
+      }
+      .grid-responsive-sim {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
       }
       .custom-bullet-light {
         padding-left: 0;

@@ -18,6 +18,16 @@ export default function ProveedoresLandingClient({ plans }: { plans: Plan[] }) {
   const [activeTab, setActiveTab] = useState<"catalog" | "coverage" | "orders">("catalog");
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [selectedPlanForModal, setSelectedPlanForModal] = useState<Plan | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   
   // Rotación del subtítulo (Typewriter/Carousel)
   const [subheadingIndex, setSubheadingIndex] = useState(0);
@@ -74,7 +84,7 @@ export default function ProveedoresLandingClient({ plans }: { plans: Plan[] }) {
 
       {/* Header / Navbar */}
       <header className="glass-header-light" style={{
-        padding: "1.25rem 5%",
+        padding: isMobile ? "0.75rem 3%" : "1.25rem 5%",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -86,21 +96,23 @@ export default function ProveedoresLandingClient({ plans }: { plans: Plan[] }) {
         borderBottom: "1px solid #e7e5e4"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <Logo size={42} variant="light" />
+          <Logo size={isMobile ? 32 : 42} variant="light" showText={!isMobile} />
         </div>
         
-        <nav style={{ display: "flex", gap: "2rem", alignItems: "center" }} className="hidden md:flex">
-          <a href="#features" className="nav-link-amber">Beneficios</a>
-          <a href="#calculator" className="nav-link-amber">Simulador</a>
-          <a href="#pricing" className="nav-link-amber">Planes B2B</a>
-          <a href="#faqs" className="nav-link-amber">Ayuda</a>
-        </nav>
+        {!isMobile && (
+          <nav style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+            <a href="#features" className="nav-link-amber">Beneficios</a>
+            <a href="#calculator" className="nav-link-amber">Simulador</a>
+            <a href="#pricing" className="nav-link-amber">Planes B2B</a>
+            <a href="#faqs" className="nav-link-amber">Ayuda</a>
+          </nav>
+        )}
 
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <Link href="/login" className="btn btn-outline-amber-theme">
+        <div style={{ display: "flex", gap: isMobile ? "0.4rem" : "1rem", alignItems: "center" }}>
+          <Link href="/login" className="btn btn-outline-amber-theme" style={{ padding: isMobile ? "0.4rem 0.8rem" : "0.6rem 1.5rem", fontSize: isMobile ? "0.75rem" : "0.9rem" }}>
             Portal B2B
           </Link>
-          <Link href="#pricing" className="btn btn-primary-amber-theme">
+          <Link href="#pricing" className="btn btn-primary-amber-theme" style={{ padding: isMobile ? "0.4rem 0.8rem" : "0.65rem 1.5rem", fontSize: isMobile ? "0.75rem" : "0.9rem" }}>
             Registrar Marca
           </Link>
         </div>
@@ -119,7 +131,7 @@ export default function ProveedoresLandingClient({ plans }: { plans: Plan[] }) {
             </div>
             
             <h1 style={{
-              fontSize: "4.25rem",
+              fontSize: isMobile ? "2.5rem" : "4.25rem",
               fontWeight: 900,
               lineHeight: 1.1,
               marginBottom: "1.5rem",
@@ -225,7 +237,7 @@ export default function ProveedoresLandingClient({ plans }: { plans: Plan[] }) {
           <div className="badge-premium-amber" style={{ marginBottom: "1.5rem" }}>
             🛠️ HERRAMIENTAS PARA PROVEEDORES
           </div>
-          <h2 style={{ fontSize: "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#1c1917" }}>
+          <h2 style={{ fontSize: isMobile ? "2rem" : "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#1c1917" }}>
             Control Total de tu Distribución B2B
           </h2>
           <p style={{ color: "#57534e", fontSize: "1.15rem", lineHeight: 1.6 }}>
@@ -417,7 +429,7 @@ export default function ProveedoresLandingClient({ plans }: { plans: Plan[] }) {
           <div className="badge-premium-amber" style={{ marginBottom: "1.5rem" }}>
             📊 SIMULADOR FINANCIERO B2B
           </div>
-          <h2 style={{ fontSize: "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#1c1917" }}>
+          <h2 style={{ fontSize: isMobile ? "2rem" : "3.25rem", fontWeight: 900, marginBottom: "1.5rem", letterSpacing: "-1px", color: "#1c1917" }}>
             Proyección de Ventas en la Red Stratos
           </h2>
           <p style={{ color: "#57534e", fontSize: "1.15rem", lineHeight: 1.6 }}>
@@ -434,11 +446,7 @@ export default function ProveedoresLandingClient({ plans }: { plans: Plan[] }) {
           padding: "2.5rem",
           boxShadow: "0 20px 40px rgba(0, 0, 0, 0.02)"
         }}>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "3rem"
-          }} className="grid-responsive-sim">
+          <div className="grid-responsive-sim">
             
             {/* Controles de Entrada */}
             <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
@@ -537,7 +545,7 @@ export default function ProveedoresLandingClient({ plans }: { plans: Plan[] }) {
             💎 MEMBRESÍAS Y PLANES B2B
           </div>
           <h2 style={{
-            fontSize: "3.25rem",
+            fontSize: isMobile ? "2rem" : "3.25rem",
             fontWeight: 900,
             lineHeight: 1.2,
             letterSpacing: "-1px",
@@ -1189,6 +1197,19 @@ const styleTag = (
       background-size: 24px 24px;
     }
 
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .grid-responsive-sim {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+
     .nav-link-amber {
       color: #57534e;
       text-decoration: none;
@@ -1373,6 +1394,10 @@ const styleTag = (
         grid-template-columns: 1fr;
         gap: 3rem;
         text-align: center;
+      }
+      .grid-responsive-sim {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
       }
       .custom-bullet-amber {
         padding-left: 0;
