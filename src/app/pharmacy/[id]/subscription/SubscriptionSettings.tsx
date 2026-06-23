@@ -70,7 +70,7 @@ export default function SubscriptionSettings({
   };
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+    <div className="grid-layout-2-equal">
       {/* Resumen del Plan */}
       <div className="card">
         <div className="card-header">

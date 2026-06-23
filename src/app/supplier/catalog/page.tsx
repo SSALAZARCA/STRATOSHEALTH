@@ -82,7 +82,7 @@ export default async function SupplierCatalog() {
       {/* Importación masiva CSV */}
       <SupplierCatalogImportClient currentOffers={supplier.offers} />
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 350px", gap: "2rem" }}>
+      <div className="grid-layout-sidebar">
         <div className="card">
           <div className="card-header">
             <div className="card-title">Ofertas Publicadas ({supplier.offers.length})</div>
@@ -133,7 +133,7 @@ export default async function SupplierCatalog() {
             <div className="card-title">➕ Nueva Oferta</div>
           </div>
           <form action={createOffer} style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div className="grid-layout-2-equal">
               <div>
                 <label className="form-label">Nombre Comercial *</label>
                 <input type="text" name="name" required className="form-control" placeholder="Ej: Dolex Forte" />
@@ -144,7 +144,7 @@ export default async function SupplierCatalog() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div className="grid-layout-2-equal">
               <div>
                 <label className="form-label">Concentración</label>
                 <input type="text" name="concentration" className="form-control" placeholder="Ej: 500mg" />
@@ -155,7 +155,7 @@ export default async function SupplierCatalog() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div className="grid-layout-2-equal">
               <div>
                 <label className="form-label">Registro INVIMA</label>
                 <input type="text" name="invimaSanitary" className="form-control" placeholder="Opcional" />
@@ -166,7 +166,7 @@ export default async function SupplierCatalog() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div className="grid-layout-2-equal">
               <div>
                 <label className="form-label">Lote *</label>
                 <input type="text" name="lot" required className="form-control" placeholder="Ej: LT-99882" />
@@ -188,7 +188,7 @@ export default async function SupplierCatalog() {
               </label>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
+            <div className="grid-layout-3-equal">
               <div>
                 <label className="form-label">Precio Venta ($) *</label>
                 <input type="number" name="price" required className="form-control" min="0" />

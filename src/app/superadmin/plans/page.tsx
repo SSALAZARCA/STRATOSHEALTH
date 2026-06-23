@@ -81,7 +81,7 @@ export default async function SuperAdminPlans({ searchParams }: { searchParams: 
         <p>Gestiona los planes comerciales que ofrecerás a las clínicas</p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "2rem" }}>
+      <div className="grid-layout-sidebar-300">
         <div className="card">
           <div className="card-header">
             <div className="card-title">Planes Configurados</div>

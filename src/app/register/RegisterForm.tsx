@@ -45,7 +45,7 @@ export default function RegisterForm({
       {/* 1. Datos de la IPS */}
       <div>
         <h3 style={{ fontSize: "1.1rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.5rem", marginBottom: "1rem", color: "#60a5fa" }}>1. Información de la Clínica (IPS)</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
           <div style={{ gridColumn: "1 / -1" }}>
             <label className="form-label">Nombre de la Clínica / Farmacia *</label>
             <input type="text" name="clinicName" required className="form-control" placeholder="Ej: Clínica San Rafael" />
@@ -64,7 +64,7 @@ export default function RegisterForm({
       {/* 2. Datos del Administrador */}
       <div>
         <h3 style={{ fontSize: "1.1rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.5rem", marginBottom: "1rem", color: "#60a5fa" }}>2. Cuenta del Administrador (Gerente)</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
           <div style={{ gridColumn: "1 / -1" }}>
             <label className="form-label">Nombre Completo *</label>
             <input type="text" name="adminName" required className="form-control" placeholder="Tu nombre" />
@@ -150,7 +150,7 @@ export default function RegisterForm({
             <input type="text" name="cardNumber" required className="form-control" placeholder="•••• •••• •••• ••••" maxLength={19} />
           </div>
           
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div className="grid-layout-2-equal">
             <div>
               <label className="form-label">Expiración</label>
               <div style={{ display: "flex", gap: "0.5rem" }}>

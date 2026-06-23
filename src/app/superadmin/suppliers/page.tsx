@@ -341,7 +341,7 @@ export default async function SuperAdminSuppliers({
 
       {/* CONTENIDO PESTAÑA: PROVEEDORES */}
       {currentTab === "suppliers" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 370px", gap: "2rem" }}>
+        <div className="grid-layout-sidebar-370">
           {/* Listado de Proveedores */}
           <div className="card">
             <div className="card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -647,7 +647,7 @@ export default async function SuperAdminSuppliers({
 
       {/* CONTENIDO PESTAÑA: PLANES */}
       {currentTab === "plans" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 350px", gap: "2rem" }}>
+        <div className="grid-layout-sidebar">
           {/* Listado de Planes de Proveedores */}
           <div className="card">
             <div className="card-header">

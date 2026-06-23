@@ -93,7 +93,7 @@ export default async function UsersManagementPage({ params }: { params: Promise<
         <p>Administra los accesos de enfermería y regentes de farmacia para tu clínica</p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 350px", gap: "2rem" }}>
+      <div className="grid-layout-sidebar">
         <div className="card">
           <div className="card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div className="card-title">Personal Activo</div>

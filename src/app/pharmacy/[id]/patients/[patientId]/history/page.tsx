@@ -61,7 +61,7 @@ export default async function ClinicalHistoryPage({ params }: { params: Promise<
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 350px", gap: "2rem" }}>
+      <div className="grid-layout-sidebar">
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           
           {history.records.length === 0 && (

@@ -68,7 +68,7 @@ export default async function SuperAdminTenants() {
         <p>Gestiona las clínicas que utilizan el software</p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "2rem" }}>
+      <div className="grid-layout-sidebar-300">
         <div className="card">
           <div className="card-header">
             <div className="card-title">Listado de IPS</div>

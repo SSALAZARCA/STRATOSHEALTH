@@ -106,7 +106,7 @@ export default function BackupSettings({
         </button>
       </div>
 
-      <div style={{ padding: "1.5rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+      <div className="grid-layout-2-equal" style={{ padding: "1.5rem" }}>
         {/* Lado izquierdo: Lista de Horarios */}
         <div>
           <h4 style={{ margin: "0 0 1rem 0", color: "#38bdf8" }}>Horarios de Backup Configurados</h4>

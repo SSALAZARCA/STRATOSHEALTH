@@ -59,7 +59,7 @@ export default function AddPaymentMethodModal({
             <p style={{ marginTop: "0.5rem", marginBottom: 0, fontSize: "0.75rem", color: "#64748b", lineHeight: 1.4 }}>PCI DSS: Cifrado en tránsito. Solo guardaremos los últimos 4 dígitos.</p>
           </div>
           
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div className="grid-layout-2-equal" style={{ gap: "1rem" }}>
             <div>
               <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.875rem", fontWeight: 700, color: "#334155" }}>Expiración</label>
               <div style={{ display: "flex", gap: "0.5rem" }}>

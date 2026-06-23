@@ -100,12 +100,25 @@ export default async function SupplierLayout({ children }: { children: ReactNode
   }
 
   return (
-    <div className="app-shell" style={{ '--primary': '#f59e0b', '--primary-hover': '#d97706', '--primary-light': 'rgba(245, 158, 11, 0.15)' } as React.CSSProperties}>
+    <div className="app-shell" style={{ '--primary': '#f59e0b', '--primary-hover': '#d97706', '--primary-light': 'rgba(245, 158, 11, 0.15)', position: 'relative' } as React.CSSProperties}>
+      {/* CSS-only mobile sidebar toggle */}
+      <input type="checkbox" id="sidebar-toggle" className="sidebar-toggle-checkbox" style={{ display: "none" }} />
+      <label htmlFor="sidebar-toggle" className="sidebar-overlay" />
+
       <SupplierSidebar />
 
       <div className="main-content">
         <header className="topbar">
-          <span className="topbar-title">Central de Distribución Farmacéutica</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+            <label htmlFor="sidebar-toggle" className="sidebar-toggle-label" aria-label="Abrir menú">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+              </svg>
+            </label>
+            <span className="topbar-title">Central de Distribución Farmacéutica</span>
+          </div>
           <div className="topbar-user">
             <div className="avatar" style={{ background: "var(--primary)" }}>📦</div>
             <div>

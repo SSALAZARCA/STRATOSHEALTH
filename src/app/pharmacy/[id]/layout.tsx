@@ -121,7 +121,11 @@ export default async function PharmacyLayout({ children, params }: { children: R
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" style={{ position: "relative" }}>
+      {/* CSS-only mobile sidebar toggle */}
+      <input type="checkbox" id="sidebar-toggle" className="sidebar-toggle-checkbox" style={{ display: "none" }} />
+      <label htmlFor="sidebar-toggle" className="sidebar-overlay" />
+
       <aside className="sidebar">
         <div className="sidebar-logo">
           <Logo variant="dark" size={28} />
@@ -139,7 +143,16 @@ export default async function PharmacyLayout({ children, params }: { children: R
 
       <div className="main-content">
         <header className="topbar">
-          <span className="topbar-title">Sistema de Farmacia IPS</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+            <label htmlFor="sidebar-toggle" className="sidebar-toggle-label" aria-label="Abrir menú">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+              </svg>
+            </label>
+            <span className="topbar-title">Sistema de Farmacia IPS</span>
+          </div>
           <div className="topbar-user">
             <div className="avatar">{name?.charAt(0).toUpperCase()}</div>
             <div>

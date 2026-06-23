@@ -21,7 +21,7 @@ export default async function DictionariesSettingsPage({ params }: { params: Pro
         <p>Gestión de las bases de datos maestras requeridas para RIPS y Facturación Electrónica (Resolución 2275).</p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+      <div className="grid-layout-2-equal">
         {/* CIE-10 Panel */}
         <div className="card">
           <div className="card-header">

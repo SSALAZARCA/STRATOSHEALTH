@@ -48,7 +48,7 @@ export default async function SuperAdminSettings() {
         <p>Configura las pasarelas de pago para el cobro automatizado de suscripciones</p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+      <div className="grid-layout-2-equal">
         {/* STRIPE */}
         <div className="card">
           <div className="card-header">
