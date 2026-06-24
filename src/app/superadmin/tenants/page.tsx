@@ -5,6 +5,8 @@ import { ToggleTenantButton } from "./ToggleTenantButton";
 
 const prisma = new PrismaClient();
 
+export const dynamic = "force-dynamic";
+
 export default async function SuperAdminTenants() {
   const tenants = await prisma.tenant.findMany({
     include: { users: true, plan: true },
