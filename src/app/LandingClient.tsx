@@ -1359,6 +1359,15 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
                 <li><Link href="/register" style={{ color: "#94a3b8", textDecoration: "none" }}>Auto-Registro IPS</Link></li>
               </ul>
             </div>
+            
+            <div>
+              <h5 style={{ color: "white", fontWeight: 800, marginBottom: "1rem" }}>Legal</h5>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, fontSize: "0.9rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                <li><Link href="/legal/terms" style={{ color: "#94a3b8", textDecoration: "none" }}>Términos y Condiciones</Link></li>
+                <li><Link href="/legal/privacy" style={{ color: "#94a3b8", textDecoration: "none" }}>Privacidad / Habeas Data</Link></li>
+                <li><Link href="/legal/cookies" style={{ color: "#94a3b8", textDecoration: "none" }}>Política de Cookies</Link></li>
+              </ul>
+            </div>
           </div>
         </div>
 
