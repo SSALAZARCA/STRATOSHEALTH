@@ -120,16 +120,6 @@ function LoginForm() {
             {loading ? "Iniciando Sesión..." : "Iniciar Sesión"}
           </button>
         </form>
-
-        <div style={{ marginTop: "2.5rem", paddingTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.1)", fontSize: "0.8rem", color: "var(--text-muted)" }}>
-          <p style={{ marginBottom: "0.5rem", fontWeight: 600 }}>Cuentas de prueba (Clave: 123456)</p>
-          <ul style={{ paddingLeft: "1rem", margin: 0, display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-            <li><strong>Superadmin:</strong> admin@stratoshealth.com</li>
-            <li><strong>Gerente:</strong> gerencia@clinicasanrafael.com</li>
-            <li><strong>Regente:</strong> regente@clinicasanrafael.com</li>
-            <li><strong>Enfermera:</strong> enfermera@clinicasanrafael.com</li>
-          </ul>
-        </div>
       </div>
     </div>
   );
