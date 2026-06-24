@@ -11,7 +11,7 @@ export default auth((req) => {
 
   const isLoggedIn = !!req.auth;
   const isAuthPage = req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/register";
-  const isPublicPage = req.nextUrl.pathname === "/" || req.nextUrl.pathname === "/proveedores" || isAuthPage || req.nextUrl.pathname.startsWith("/api/") || req.nextUrl.pathname.startsWith("/images/");
+  const isPublicPage = req.nextUrl.pathname === "/" || req.nextUrl.pathname === "/proveedores" || req.nextUrl.pathname.startsWith("/legal") || isAuthPage || req.nextUrl.pathname.startsWith("/api/") || req.nextUrl.pathname.startsWith("/images/");
   const userRole = req.auth?.user?.role;
   const userTenant = req.auth?.user?.tenantId;
 
