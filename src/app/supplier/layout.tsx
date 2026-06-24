@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { PrismaClient } from "@prisma/client";
 import SupplierSidebar from "./SupplierSidebar";
 import LogoutButton from "./LogoutButton";
+import { AutoLogout } from "@/components/AutoLogout";
 
 const prisma = new PrismaClient();
 
@@ -101,6 +102,7 @@ export default async function SupplierLayout({ children }: { children: ReactNode
 
   return (
     <div className="app-shell" style={{ '--primary': '#f59e0b', '--primary-hover': '#d97706', '--primary-light': 'rgba(245, 158, 11, 0.15)', position: 'relative' } as React.CSSProperties}>
+      <AutoLogout timeoutMinutes={15} />
       {/* CSS-only mobile sidebar toggle */}
       <input type="checkbox" id="sidebar-toggle" className="sidebar-toggle-checkbox" style={{ display: "none" }} />
       <label htmlFor="sidebar-toggle" className="sidebar-overlay" />

@@ -89,7 +89,17 @@ export default async function ClinicalHistoryPage({ params }: { params: Promise<
                   </div>
                 </div>
               </div>
-              <div style={{ padding: "1.5rem", borderBottom: "1px solid var(--border)" }}>
+
+              {record.status === "SIGNED" && (
+                <div style={{ padding: "0.75rem 1.5rem", background: "rgba(34, 197, 94, 0.1)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ fontSize: "1.2rem" }}>🔒</span>
+                  <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                    <strong style={{ color: "var(--success)" }}>Registro Clínico Inmutable.</strong> De acuerdo con la Resolución 1995 de 1999, este documento ha sido firmado electrónicamente y no puede ser modificado ni eliminado. Cualquier corrección debe realizarse mediante una Nota Aclaratoria.
+                  </div>
+                </div>
+              )}
+
+              <div style={{ padding: "1.5rem", borderBottom: "1px solid var(--border)", opacity: record.status === "SIGNED" ? 0.8 : 1 }}>
                 
                 {record.anamnesis && (
                   <div style={{ marginBottom: "1rem" }}>

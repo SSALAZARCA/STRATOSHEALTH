@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { auth } from "@/auth";
 import { SidebarNav } from "./SidebarNav"; 
 import { Logo } from "@/components/Logo";
+import { AutoLogout } from "@/components/AutoLogout";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 
@@ -122,6 +123,7 @@ export default async function PharmacyLayout({ children, params }: { children: R
 
   return (
     <div className="app-shell" style={{ position: "relative" }}>
+      <AutoLogout timeoutMinutes={15} />
       {/* CSS-only mobile sidebar toggle */}
       <input type="checkbox" id="sidebar-toggle" className="sidebar-toggle-checkbox" style={{ display: "none" }} />
       <label htmlFor="sidebar-toggle" className="sidebar-overlay" />

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { registerTenant } from "@/lib/actions/register";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function RegisterForm({ 
   plans, 
@@ -170,6 +171,13 @@ export default function RegisterForm({
             <span>Tus datos de pago están encriptados y procesados de manera segura mediante tokens. No guardamos información sensible en nuestros servidores.</span>
           </div>
         </div>
+      </div>
+
+      <div style={{ marginTop: "1.5rem", padding: "1rem", background: "var(--bg)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)", display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+        <input type="checkbox" id="terms" required style={{ marginTop: "0.2rem", width: "1.2rem", height: "1.2rem", cursor: "pointer" }} />
+        <label htmlFor="terms" style={{ fontSize: "0.9rem", color: "var(--text-muted)", cursor: "pointer" }}>
+          He leído y acepto los <Link href="/legal/terms" target="_blank" style={{ color: "var(--primary)", textDecoration: "underline" }}>Términos y Condiciones</Link> y la <Link href="/legal/privacy" target="_blank" style={{ color: "var(--primary)", textDecoration: "underline" }}>Política de Tratamiento de Datos (Habeas Data)</Link>.
+        </label>
       </div>
 
       <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>

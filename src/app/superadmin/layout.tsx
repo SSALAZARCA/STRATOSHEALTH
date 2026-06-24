@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import { signOut } from "next-auth/react";
 import { Logo } from "@/components/Logo";
+import { AutoLogout } from "@/components/AutoLogout";
 
 function NavItem({ href, icon, label }: { href: string; icon: ReactNode; label: string }) {
   const pathname = usePathname();
@@ -19,6 +20,7 @@ function NavItem({ href, icon, label }: { href: string; icon: ReactNode; label: 
 export default function SuperAdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="app-shell" style={{ '--primary': '#8b5cf6', '--primary-hover': '#7c3aed', '--primary-light': 'rgba(139, 92, 246, 0.15)', position: 'relative' } as React.CSSProperties}>
+      <AutoLogout timeoutMinutes={15} />
       {/* CSS-only mobile sidebar toggle */}
       <input type="checkbox" id="sidebar-toggle" className="sidebar-toggle-checkbox" style={{ display: "none" }} />
       <label htmlFor="sidebar-toggle" className="sidebar-overlay" />

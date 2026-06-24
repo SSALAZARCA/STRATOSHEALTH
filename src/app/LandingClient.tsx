@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { CookieBanner } from "@/components/CookieBanner";
 
 interface Plan {
   id: string;
@@ -1707,6 +1708,8 @@ export default function LandingClient({ plans }: { plans: Plan[] }) {
           </div>
         </div>
       )}
+
+      <CookieBanner />
     </div>
   );
 }
